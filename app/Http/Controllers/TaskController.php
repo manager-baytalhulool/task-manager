@@ -15,15 +15,24 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = Task::select('id', 'created_by', 'assignee_id', 'status', 'started_at', 'completed_at')
+        // 'taskType' => function ($q) {
+        //             $q->select('id', 'name');
+        //         },
+        $tasks = Task::select(
+            'id',
+            'description',
+            'created_by',
+            'assignee_id',
+            'status',
+            "created_at",
+            'started_at',
+            'completed_at'
+        )
             ->with([
                 'assignee' => function ($q) {
                     $q->select('id', 'name');
                 },
                 'createdBy' => function ($q) {
-                    $q->select('id', 'name');
-                },
-                'taskType' => function ($q) {
                     $q->select('id', 'name');
                 },
             ])
@@ -47,7 +56,7 @@ class TaskController extends Controller
             'created_by' => 'required|exists:users,id',
             'assignee_id' => 'required|exists:users,id'
         ]);
-        // "status" => ["required", Rule::enum(TaskStatusEnum::class)]        
+        // "status" => ["required", Rule::enum(TaskStatusEnum::class)]
 
         $data['status'] = TaskStatusEnum::CREATED->value;
         $task = Task::create($data);
