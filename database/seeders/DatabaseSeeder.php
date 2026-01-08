@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             TaskTypeSeeder::class,
+            RoleSeeder::class,
             UserSeeder::class, // This creates your specific admin/users
         ]);
 
@@ -30,7 +31,6 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        $this->call(RoleSeeder::class);
-        $this->call(UserSeeder::class);
+
     }
 }

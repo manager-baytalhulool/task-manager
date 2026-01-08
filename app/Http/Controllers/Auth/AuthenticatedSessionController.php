@@ -36,9 +36,8 @@ class AuthenticatedSessionController extends Controller
         // $user->permissions = $user->role->permissions->pluck('description');
 
         return response()->json([
-            'data' => [
-                'token' => $token
-            ]
+            'token' => $token
+
         ]);
     }
 
@@ -47,7 +46,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request)
     {
-        $request->tokens()->delete();
+        $request->user()->delete();
 
         return response()->json([
             "message" => "Logged out successfully"

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\TaskStatusEnum;
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -15,8 +16,17 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = Task::select('id', 'created_by', 'assignee_id', 'status', 'started_at', 'completed_at')
-            ->with([
+        if (Auth::user()->cannot('viewAny', Task::class)) {
+            return response()->json([
+                'message' => 'You do not have permission to view tasks.',
+                'success' => false
+            ], Response::HTTP_FORBIDDEN);
+        }
+        $tasks = Task::select('id', 'description', 'created_by', 'assignee_id', 'status', 'started_at', 'completed_at')
+        ->when(Auth::user()->role_id !== 1, function ($query) {
+            return $query->where('assignee_id', Auth::id());
+        })
+        ->with([
                 'assignee' => function ($q) {
                     $q->select('id', 'name');
                 },
@@ -44,11 +54,13 @@ class TaskController extends Controller
     {
         $data = $request->validate([
             'description' => 'required|max:1024',
-            'created_by' => 'required|exists:users,id',
-            'assignee_id' => 'required|exists:users,id'
+            'assignee_id' => Auth::user()->role_id === 1 ? 'required|exists:users,id' : 'nullable'
         ]);
-        // "status" => ["required", Rule::enum(TaskStatusEnum::class)]        
-
+        if (Auth::user()->role_id !== 1) {
+            $data['assignee_id'] = Auth::id();
+        }
+        // "status" => ["required", Rule::enum(TaskStatusEnum::class)]
+        $data['created_by'] = Auth::id();
         $data['status'] = TaskStatusEnum::CREATED->value;
         $task = Task::create($data);
 
