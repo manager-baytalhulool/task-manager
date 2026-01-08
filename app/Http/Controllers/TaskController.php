@@ -33,9 +33,6 @@ class TaskController extends Controller
                 'createdBy' => function ($q) {
                     $q->select('id', 'name');
                 },
-                'taskType' => function ($q) {
-                    $q->select('id', 'name');
-                },
             ])
             ->orderBy('created_at', 'desc')
             ->paginate();
