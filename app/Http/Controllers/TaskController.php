@@ -16,12 +16,12 @@ class TaskController extends Controller
      */
     public function index()
     {
-        if (Auth::user()->cannot('viewAny', Task::class)) {
-            return response()->json([
-                'message' => 'You do not have permission to view tasks.',
-                'success' => false
-            ], Response::HTTP_FORBIDDEN);
-        }
+        // if (Auth::user()->cannot('viewAny', Task::class)) {
+        //     return response()->json([
+        //         'message' => 'You do not have permission to view tasks.',
+        //         'success' => false
+        //     ], Response::HTTP_FORBIDDEN);
+        // }
         $tasks = Task::select('id', 'description', 'created_by', 'assignee_id', 'status', 'started_at', 'completed_at')
         ->when(Auth::user()->role_id !== 1, function ($query) {
             return $query->where('assignee_id', Auth::id());
