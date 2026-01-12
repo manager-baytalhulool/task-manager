@@ -61,6 +61,12 @@ class TaskController extends Controller
         $data['status'] = TaskStatusEnum::CREATED->value;
         $task = Task::create($data);
 
+        $task->load([
+            "assignee" => function ($q) {
+                $q->select('id', 'name');
+            }
+        ]);
+
         return response()->json([
             'message'   => 'Task created successfully.',
             'data'      => ['task' => $task],
@@ -98,6 +104,12 @@ class TaskController extends Controller
         ]);
 
         $task->update($data);
+
+        $task->load([
+            "assignee" => function ($q) {
+                $q->select('id', 'name');
+            }
+        ]);
 
         return response()->json([
             'data' => ['task' => $task],

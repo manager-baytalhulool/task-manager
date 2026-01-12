@@ -24,7 +24,11 @@ class UserController extends Controller
             ]);
         }
 
-        $users = User::select("id", "name", "email")->paginate();
+        $users = User::select("id", "name", "email", "role_id")->with([
+                'role' => function ($q) {
+                    $q->select('id', 'name');
+                },
+            ])->paginate();
         return response()->json([
             'success' => true,
             'data' => ['users' => $users]
