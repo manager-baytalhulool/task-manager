@@ -83,6 +83,17 @@ class UserController extends Controller
                 ]
             ]);
         }
+
+        $user = User::select(['id', 'name', 'email', 'role_id'])->where('id', '=', $id)->first();
+
+        // $user = $request->user();
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    "user" => $user
+                ]
+            ]);
     }
 
     /**
@@ -146,5 +157,15 @@ class UserController extends Controller
             ],
             'success'    => true
         ], Response::HTTP_OK);
+    }
+
+    public function showUser(User $user)
+    {
+        return response()->json([
+            'success' => true,
+            'data' => [
+                "user" => $user
+            ]
+        ]);
     }
 }
