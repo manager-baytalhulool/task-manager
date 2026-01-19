@@ -162,14 +162,4 @@ class UserController extends Controller
             'success'    => true
         ], Response::HTTP_OK);
     }
-
-    public function showUser(User $user)
-    {
-        return response()->json([
-            'success' => true,
-            'data' => [
-                "user" => $user
-            ]
-        ]);
-    }
 }

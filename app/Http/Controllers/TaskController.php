@@ -23,10 +23,10 @@ class TaskController extends Controller
         //     ], Response::HTTP_FORBIDDEN);
         // }
         $tasks = Task::select('id', 'description', 'created_by', 'assignee_id', 'status', 'started_at', 'completed_at')
-        ->when(Auth::user()->role_id !== 1, function ($query) {
-            return $query->where('assignee_id', Auth::id());
-        })
-        ->with([
+            ->when(Auth::user()->role_id !== 1, function ($query) {
+                return $query->where('assignee_id', Auth::id());
+            })
+            ->with([
                 'assignee' => function ($q) {
                     $q->select('id', 'name');
                 },
@@ -85,6 +85,9 @@ class TaskController extends Controller
             },
             "createdBy" => function ($q) {
                 $q->select('id', 'name');
+            },
+            "subtasks" => function ($q) {
+                $q->select('id', 'task_id', 'description', 'completed_at', 'sort_no');
             }
         ]);
         return response()->json([
@@ -99,8 +102,9 @@ class TaskController extends Controller
     public function update(Request $request, Task $task)
     {
         $data = $request->validate([
-            'description' => 'required|max:1024',
-            'assignee_id' => 'required|exists:users,id'
+            'description' => 'sometimes|required|max:1024',
+            'assignee_id' => 'sometimes|required|exists:users,id',
+            'status' => 'sometimes|required|string'
         ]);
 
         $task->update($data);
