@@ -12,11 +12,13 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $roles = Role::all();
+        $roles = Role::select("id", "name")
+            ->where("id", "!=", 1)
+            ->get();
         return response()->json([
             'success' => true,
-            'message' => 'Roles retrieved successfully.',
-            'roles' => $roles,
+            'message' => 'Roles fetched successfully.',
+            'data' => ['roles' => $roles],
         ]);
     }
 

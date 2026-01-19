@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string("description", 1024);
             $table->foreignId("created_by")->constrained("users");
             $table->foreignId("assignee_id")->constrained("users");
+            $table->foreignId("project_id")->constrained("projects");
             $table->string("status")->default(TaskStatusEnum::CREATED->value);
             $table->boolean("is_paid")->nullable();
             $table->timestamp("started_at")->nullable();

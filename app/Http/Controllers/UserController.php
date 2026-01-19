@@ -15,7 +15,9 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if ($request->for == "select") {
-            $users = User::select("id", "name")->get();
+            $users = User::select("id", "name")
+                ->where("role_id", "!=", 1)
+                ->get();
             return response()->json([
                 'success' => true,
                 'data' => [
@@ -25,10 +27,12 @@ class UserController extends Controller
         }
 
         $users = User::select("id", "name", "email", "role_id")->with([
-                'role' => function ($q) {
-                    $q->select('id', 'name');
-                },
-            ])->paginate();
+            'role' => function ($q) {
+                $q->select('id', 'name');
+            },
+        ])
+            ->where("role_id", "!=", 1)
+            ->paginate();
         return response()->json([
             'success' => true,
             'data' => ['users' => $users]
@@ -88,12 +92,12 @@ class UserController extends Controller
 
         // $user = $request->user();
 
-            return response()->json([
-                'success' => true,
-                'data' => [
-                    "user" => $user
-                ]
-            ]);
+        return response()->json([
+            'success' => true,
+            'data' => [
+                "user" => $user
+            ]
+        ]);
     }
 
     /**
