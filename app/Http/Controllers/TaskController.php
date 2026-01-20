@@ -22,7 +22,7 @@ class TaskController extends Controller
         //         'success' => false
         //     ], Response::HTTP_FORBIDDEN);
         // }
-        $tasks = Task::select('id', 'description', 'created_by', 'assignee_id', 'status', 'started_at', 'completed_at')
+        $tasks = Task::select('id', 'description', 'created_by', 'assignee_id', 'status', 'started_at', 'completed_at', 'project_id', 'created_at')
             ->when(Auth::user()->role_id !== 1, function ($query) {
                 return $query->where('assignee_id', Auth::id());
             })
@@ -31,6 +31,9 @@ class TaskController extends Controller
                     $q->select('id', 'name');
                 },
                 'createdBy' => function ($q) {
+                    $q->select('id', 'name');
+                },
+                'project' => function ($q) {
                     $q->select('id', 'name');
                 },
             ])
@@ -51,7 +54,8 @@ class TaskController extends Controller
     {
         $data = $request->validate([
             'description' => 'required|max:1024',
-            'assignee_id' => Auth::user()->role_id === 1 ? 'required|exists:users,id' : 'nullable'
+            'assignee_id' => Auth::user()->role_id === 1 ? 'required|exists:users,id' : 'nullable',
+            'project_id' => 'required|exists:projects,id',
         ]);
         if (Auth::user()->role_id !== 1) {
             $data['assignee_id'] = Auth::id();

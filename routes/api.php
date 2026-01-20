@@ -44,6 +44,4 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('subtasks', SubTaskController::class);
 
     Route::apiResource('roles', RoleController::class);
-
-
 });

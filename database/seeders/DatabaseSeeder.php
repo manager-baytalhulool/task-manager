@@ -22,6 +22,9 @@ class DatabaseSeeder extends Seeder
             TaskTypeSeeder::class,
             RoleSeeder::class,
             UserSeeder::class, // This creates your specific admin/users
+            ProjectSeeder::class,    // Naya added
+            RepositorySeeder::class,
+            TaskSeeder::class,
         ]);
 
         // User::factory(10)->create();

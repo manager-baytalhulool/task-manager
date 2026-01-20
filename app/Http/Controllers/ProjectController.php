@@ -11,9 +11,21 @@ class ProjectController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $projects = Project::select("id", "name", "started_at")
+
+        if ($request->for == "select") {
+            $projects = Project::select("id", "name")
+                ->orderBy('created_at', 'desc')
+                ->get();
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'projects' => $projects,
+                ]
+            ]);
+        }
+        $projects = Project::select("id", "name", 'live_url', 'demo_url', 'is_live', "started_at")
             ->orderBy('created_at', 'desc')
             ->paginate();
         return response()->json([
@@ -51,6 +63,10 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
+
+        $project->load(['tasks' => function ($query) {
+            $query->orderBy('created_at', 'desc')->limit(10);
+        }, 'tasks.assignee', 'repositories']);
         return response()->json([
             'success' => true,
             'data' => [
