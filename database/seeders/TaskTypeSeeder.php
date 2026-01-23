@@ -15,7 +15,7 @@ class TaskTypeSeeder extends Seeder
      */
     public function run()
     {
-        $taskTypes = ["stores", "coupons", "video editing", "video uploading", "repharasing"];
+        $taskTypes = ["front-end", "back-end"];
         foreach ($taskTypes as $taskType) {
             TaskType::create([
                 'name' => $taskType

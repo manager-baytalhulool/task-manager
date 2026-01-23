@@ -33,8 +33,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('users', UserController::class);
 
+    Route::post('/projects/import', [ProjectController::class, 'import']);
     Route::apiResource('projects', ProjectController::class);
 
+    Route::post('/repostiories/import', [RepositoryController::class, 'import']);
     Route::apiResource('repositories', RepositoryController::class);
 
     Route::apiResource('task-types', TaskTypeController::class);
