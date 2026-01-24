@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\RepositoriesImport;
 use App\Models\Repository;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class RepositoryController extends Controller
 {
@@ -95,5 +97,23 @@ class RepositoryController extends Controller
             'message' => 'Repository deleted successfully',
             'success' => true,
         ]);
+    }
+
+    public function import(Request $request)
+    {
+
+        $request->validate([
+            'file' => 'required|mimes:csv'
+        ]);
+
+        $file = $request->file('file');
+
+        Excel::import(new RepositoriesImport, $file);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Repositories imported successfully',
+
+        ], 200);
     }
 }

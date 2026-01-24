@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\ProjectsImport;
 use App\Models\Project;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProjectController extends Controller
 {
@@ -108,5 +109,22 @@ class ProjectController extends Controller
             'message' => 'Project deleted successfully',
             'project' => $project,
         ]);
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:csv'
+        ]);
+
+        $file = $request->file('file');
+
+        Excel::import(new ProjectsImport, $file);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Projects imported successfully',
+
+        ], 200);
     }
 }
