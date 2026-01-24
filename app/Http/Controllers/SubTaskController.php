@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\SubTask;
+use App\Models\Subtask;
 use Illuminate\Http\Request;
 
-class SubTaskController extends Controller
+class SubtaskController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $subtasks = SubTask::select('id', 'task_id', 'description', 'completed_at')->get();
+        $subtasks = Subtask::select('id', 'task_id', 'description', 'completed_at')->get();
 
         return response()->json([
             'success' => true,
@@ -29,12 +29,14 @@ class SubTaskController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'task_id' => 'required|exists:tasks,id',
+            'task_id' => 'sometimes|required|exists:tasks,id',
             'description' => 'nullable|string',
             'completed_at' => 'nullable|date',
         ]);
 
-        $subtask = SubTask::create($validatedData);
+        $subtask = Subtask::create($validatedData);
+
+
 
         return response()->json([
             'success' => true,
@@ -58,35 +60,37 @@ class SubTaskController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $subtask = SubTask::findOrFail($id);
+        $subtask = Subtask::findOrFail($id);
+
+        $validatedData = $request->validate([
+            'description' => 'nullable|string'
+        ]);
+
         if (!$subtask->completed_at) {
-            $validatedData = $request->validate([
-                'task_id' => 'required|exists:tasks,id',
-                'description' => 'nullable|string',
-                'completed_at' => 'nullable|date',
-            ]);
-
-            $subtask->update($validatedData);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Subtask updated successfully',
-                'data' => [
-                    'subtask' => $subtask,
-                ],
-            ]);
+            $validatedData['completed_at'] = now();
         } else {
-            return response()->json([
-                'success' => false,
-                'message' => 'Completed subtask cannot be updated',
-            ], 400);
+            $validatedData['completed_at'] = null;
         }
+
+        $subtask->update($validatedData);
+
+        if ($subtask->completed_at) {
+            $subtask->completed_at = $subtask->completed_at->format('Y-m-d H:i:s');
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Subtask updated successfully',
+            'data' => [
+                'subtask' => $subtask,
+            ],
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(SubTask $subtask)
+    public function destroy(Subtask $subtask)
     {
         $subtask->delete();
 

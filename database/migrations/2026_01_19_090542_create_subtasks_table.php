@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('subtasks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('task_id')->constrained()->onDelete('cascade');
+            $table->foreignId('task_id')->constrained();
             $table->string('description');
-            $table->date('completed_at')->nullable();
+            $table->timestamp('completed_at')->nullable();
             $table->integer('sort_no')->default(0);
             $table->timestamps();
         });

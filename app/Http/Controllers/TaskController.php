@@ -14,14 +14,19 @@ class TaskController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        // if (Auth::user()->cannot('viewAny', Task::class)) {
-        //     return response()->json([
-        //         'message' => 'You do not have permission to view tasks.',
-        //         'success' => false
-        //     ], Response::HTTP_FORBIDDEN);
-        // }
+        if ($request->for == "select") {
+            $tasks = Task::select('id', 'description')
+                ->orderBy('created_at', 'desc')
+                ->get();
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'tasks' => $tasks
+                ]
+            ]);
+        }
         $tasks = Task::select('id', 'description', 'created_by', 'assignee_id', 'status', 'started_at', 'completed_at', 'project_id', 'created_at')
             ->when(Auth::user()->role_id !== 1, function ($query) {
                 return $query->where('assignee_id', Auth::id());
@@ -67,6 +72,9 @@ class TaskController extends Controller
 
         $task->load([
             "assignee" => function ($q) {
+                $q->select('id', 'name');
+            },
+            "project" => function ($q) {
                 $q->select('id', 'name');
             }
         ]);
@@ -115,6 +123,9 @@ class TaskController extends Controller
 
         $task->load([
             "assignee" => function ($q) {
+                $q->select('id', 'name');
+            },
+            "project" => function ($q) {
                 $q->select('id', 'name');
             }
         ]);

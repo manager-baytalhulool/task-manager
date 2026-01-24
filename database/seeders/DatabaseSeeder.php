@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             ProjectSeeder::class,    // Naya added
             RepositorySeeder::class,
             TaskSeeder::class,
+            SubtaskSeeder::class,
         ]);
 
         // User::factory(10)->create();
