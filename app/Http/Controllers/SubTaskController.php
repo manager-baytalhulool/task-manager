@@ -31,8 +31,10 @@ class SubtaskController extends Controller
         $validatedData = $request->validate([
             'task_id' => 'sometimes|required|exists:tasks,id',
             'description' => 'nullable|string',
-            'completed_at' => 'nullable|date',
+            'sort_no' => 'nullable|integer',
         ]);
+
+        $validatedData['completed_at'] = null;
 
         $subtask = Subtask::create($validatedData);
 
@@ -63,10 +65,11 @@ class SubtaskController extends Controller
         $subtask = Subtask::findOrFail($id);
 
         $validatedData = $request->validate([
-            'description' => 'nullable|string'
+            'description' => 'nullable|string',
+            'sort_no' => 'nullable|integer',
         ]);
 
-        if (!$subtask->completed_at) {
+        if (!$subtask->completed_at && $request->has('completed_at')) {
             $validatedData['completed_at'] = now();
         } else {
             $validatedData['completed_at'] = null;

@@ -118,6 +118,11 @@ class TaskController extends Controller
             'assignee_id' => 'sometimes|required|exists:users,id',
             'status' => 'sometimes|required|string'
         ]);
+        if ($task->status === TaskStatusEnum::COMPLETED->value) {
+            return response()->json([
+                'message' => 'Cannot change anything of a completed task. You can delete it if needed.',
+            ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
 
         $task->update($data);
 
