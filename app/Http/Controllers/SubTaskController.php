@@ -29,7 +29,7 @@ class SubtaskController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'task_id' => 'sometimes|required|exists:tasks,id',
+            'task_id' => 'required|exists:tasks,id',
             'description' => 'nullable|string',
             'sort_no' => 'nullable|integer',
         ]);
