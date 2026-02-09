@@ -100,7 +100,8 @@ class TaskController extends Controller
             },
             "subtasks" => function ($q) {
                 $q->select('id', 'task_id', 'description', 'completed_at', 'sort_no');
-            }
+            },
+            "comments"
         ]);
         return response()->json([
             'data' => ['task' => $task],
@@ -118,10 +119,24 @@ class TaskController extends Controller
             'assignee_id' => 'sometimes|required|exists:users,id',
             'status' => 'sometimes|required|string'
         ]);
-        if ($task->status === TaskStatusEnum::COMPLETED->value) {
+        if ($task->status === TaskStatusEnum::COMPLETION_APPROVED->value) {
             return response()->json([
                 'message' => 'Cannot change anything of a completed task. You can delete it if needed.',
             ], Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        if (isset($data['status'])) {
+            $developerStatuses = [
+                TaskStatusEnum::IN_PROGRESS->value,
+                TaskStatusEnum::ON_HOLD->value,
+                TaskStatusEnum::IN_REVIEW->value
+            ];
+
+            if (in_array($data['status'], $developerStatuses) && Auth::id() !== $task->assignee_id) {
+                return response()->json([
+                    'message' => 'Only the assignee can start, hold or submit this task for review.',
+                ], Response::HTTP_FORBIDDEN);
+            }
         }
 
         $task->update($data);

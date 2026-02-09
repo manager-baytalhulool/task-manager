@@ -1,0 +1,18 @@
+includes:
+    - ./vendor/nunomaduro/larastan/extension.neon
+
+parameters:
+
+    paths:
+        - app/
+        - config/
+        - database/
+        - routes/
+
+    # Level 5 moderate hai
+    level: 5
+
+    # PHPStan 2.0 mein 'checkMissingIterableValueType' kaam nahi karta.
+    # Iske bajaye ab 'ignoreErrors' mein identifier use karna padta hai:
+    ignoreErrors:
+        - identifier: missingType.iterableValue

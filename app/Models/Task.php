@@ -34,4 +34,8 @@ class Task extends Model
     {
         return $this->belongsTo(Project::class);
     }
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class)->whereNull('parent_id')->with('user', 'replies');
+    }
 }
