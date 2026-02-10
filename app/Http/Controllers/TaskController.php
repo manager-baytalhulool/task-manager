@@ -31,6 +31,12 @@ class TaskController extends Controller
             ->when(Auth::user()->role_id !== 1, function ($query) {
                 return $query->where('assignee_id', Auth::id());
             })
+            ->when($request->assignee_id, function ($query, $assigneeId) {
+                return $query->where('assignee_id', $assigneeId);
+            })
+            ->when($request->status, function ($query, $status) {
+                return $query->where('status', $status);
+            })
             ->with([
                 'assignee' => function ($q) {
                     $q->select('id', 'name');
