@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+// use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -37,5 +39,16 @@ class Task extends Model
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class)->whereNull('parent_id')->with('user', 'replies');
+    }
+
+    /**
+     * Scope a query to only include popular users.
+     */
+    // #[Scope]
+    public function scopeSearch(Builder $query, string|null $searchTerm): void
+    {
+        if (empty($searchTerm)) return;
+        $query->where('description', 'like', "%{$searchTerm}%")
+            ->orWhere("status", 'like', "%{$searchTerm}%");
     }
 }

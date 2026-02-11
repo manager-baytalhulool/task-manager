@@ -27,7 +27,18 @@ class TaskController extends Controller
                 ]
             ]);
         }
-        $tasks = Task::select('id', 'description', 'created_by', 'assignee_id', 'status', 'started_at', 'completed_at', 'project_id', 'created_at')
+        $tasks = Task::select(
+            'id',
+            'description',
+            'created_by',
+            'assignee_id',
+            'status',
+            'started_at',
+            'completed_at',
+            'project_id',
+            'created_at'
+        )
+            ->search($request->search)
             ->when(Auth::user()->role_id !== 1, function ($query) {
                 return $query->where('assignee_id', Auth::id());
             })
@@ -50,6 +61,7 @@ class TaskController extends Controller
             ])
             ->orderBy('created_at', 'desc')
             ->paginate();
+            // dd($tasks);
         return response()->json([
             'success' => true,
             'data' => [
