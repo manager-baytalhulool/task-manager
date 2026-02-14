@@ -26,9 +26,7 @@ class ProjectController extends Controller
                 ]
             ]);
         }
-        $projects = Project::select("id", "name", 'live_url', 'demo_url', 'is_live', "started_at")
-            ->orderBy('created_at', 'desc')
-            ->paginate();
+        $projects = Project::select("id", "name", 'live_url', 'demo_url', 'is_live', "started_at")->search($request->search)->orderBy('created_at', 'desc')->paginate();
         return response()->json([
             'success' => true,
             'data' => [

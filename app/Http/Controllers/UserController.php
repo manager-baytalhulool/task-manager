@@ -31,7 +31,7 @@ class UserController extends Controller
                 $q->select('id', 'name');
             },
         ])
-            ->where("role_id", "!=", 1)
+            ->where("role_id", "!=", 1)->search($request->search)
             ->paginate();
         return response()->json([
             'success' => true,
@@ -59,7 +59,7 @@ class UserController extends Controller
             'name' => $validatedUser['name'],
             'email' => $validatedUser['email'],
             'password' => Hash::make($validatedUser['password']),
-            'role_id' => 2
+            'role_id' => $request->role_id ?? 4, // Default role_id to 4 (developer) if not provided
         ]);
 
         return response()->json([
