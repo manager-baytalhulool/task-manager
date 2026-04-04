@@ -48,6 +48,9 @@ class TaskController extends Controller
             ->when($request->status, function ($query, $status) {
                 return $query->where('status', $status);
             })
+            ->when($request->project_id, function ($query, $projectId) {
+                return $query->where('project_id', $projectId);
+            })
             ->with([
                 'assignee' => function ($q) {
                     $q->select('id', 'name');
@@ -61,7 +64,7 @@ class TaskController extends Controller
             ])
             ->orderBy('created_at', 'desc')
             ->paginate();
-            // dd($tasks);
+        // dd($tasks);
         return response()->json([
             'success' => true,
             'data' => [
