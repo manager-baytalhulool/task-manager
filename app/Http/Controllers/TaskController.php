@@ -51,6 +51,12 @@ class TaskController extends Controller
             ->when($request->project_id, function ($query, $projectId) {
                 return $query->where('project_id', $projectId);
             })
+            ->when($request->start_date, function ($query, $startDate) {
+                return $query->where('created_at', '>=', $startDate . ' 00:00:00');
+            })
+            ->when($request->end_date, function ($query, $endDate) {
+                return $query->where('created_at', '<=', $endDate . ' 23:59:59');
+            })
             ->with([
                 'assignee' => function ($q) {
                     $q->select('id', 'name');

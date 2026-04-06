@@ -31,6 +31,12 @@ class ProjectController extends Controller
             ->when($request->is_live !== null && $request->is_live !== '', function ($query) use ($request) {
                 return $query->where('is_live', $request->is_live);
             })
+            ->when($request->start_date, function ($query, $startDate) {
+                return $query->where('started_at', '>=', $startDate);
+            })
+            ->when($request->end_date, function ($query, $endDate) {
+                return $query->where('started_at', '<=', $endDate);
+            })
             ->orderBy('created_at', 'desc')
             ->paginate();
         return response()->json([
