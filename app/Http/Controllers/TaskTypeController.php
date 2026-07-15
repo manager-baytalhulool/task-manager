@@ -11,6 +11,19 @@ class TaskTypeController extends Controller
     /**
      * Display a listing of the resource.
      */
+    // public function index(Request $request)
+    // {
+    //     if ($request->for == "select") {
+    //         $taskTypes = TaskType::select("id", "name")->get();
+    //         return response()->json([
+    //             'success' => true,
+    //             'data' => [
+    //                 'task_types' => $taskTypes
+    //             ]
+    //         ]);
+    //     }
+    // }
+
     public function index(Request $request)
     {
         if ($request->for == "select") {
@@ -22,6 +35,18 @@ class TaskTypeController extends Controller
                 ]
             ]);
         }
+
+        $taskTypes = TaskType::select("id", "name")
+            ->search($request->search)
+            ->orderBy('created_at', 'desc')
+            ->paginate();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'task_types' => $taskTypes
+            ]
+        ]);
     }
 
     /**

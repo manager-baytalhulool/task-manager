@@ -29,24 +29,24 @@ Route::prefix('auth')->group(function () {
 });
 
 
-Route::middleware('auth:sanctum')->group(function () {
-    // Route::get('/users/me', [UserController::class, 'show']);
+// Route::middleware('auth:sanctum')->group(function () {
+//     // Route::get('/users/me', [UserController::class, 'show']);
 
-    Route::apiResource('users', UserController::class);
+//     Route::apiResource('users', UserController::class);
 
-    Route::post('/projects/import', [ProjectController::class, 'import']);
-    Route::apiResource('projects', ProjectController::class);
+//     Route::post('/projects/import', [ProjectController::class, 'import']);
+//     Route::apiResource('projects', ProjectController::class);
 
-    Route::post('/repostiories/import', [RepositoryController::class, 'import']);
-    Route::apiResource('repositories', RepositoryController::class);
+//     Route::post('/repostiories/import', [RepositoryController::class, 'import']);
+//     Route::apiResource('repositories', RepositoryController::class);
 
-    Route::apiResource('task-types', TaskTypeController::class);
+//     Route::apiResource('task-types', TaskTypeController::class);
 
-    Route::apiResource('tasks', TaskController::class);
+//     Route::apiResource('tasks', TaskController::class);
 
-    Route::apiResource('subtasks', SubTaskController::class);
+//     Route::apiResource('subtasks', SubTaskController::class);
 
-    Route::post('comments', [CommentController::class, 'store']);
+//     Route::post('comments', [CommentController::class, 'store']);
 
-    Route::apiResource('roles', RoleController::class);
-});
+//     Route::apiResource('roles', RoleController::class);
+// });

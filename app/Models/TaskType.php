@@ -10,4 +10,10 @@ class TaskType extends Model
     use SoftDeletes;
 
     protected $guarded = ["id"];
+
+    public function scopeSearch(\Illuminate\Database\Eloquent\Builder $query, string|null $searchTerm): void
+    {
+        if (empty($searchTerm)) return;
+        $query->where('name', 'like', "%{$searchTerm}%");
+    }
 }
