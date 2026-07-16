@@ -13,7 +13,7 @@ class RepositoriesImport implements ToModel
     {
 
         $project = Project::select('id')->where('name', '=', $row[0])
-        ->first();
+            ->first();
 
         return new Repository([
             'project_id' => $project->id,

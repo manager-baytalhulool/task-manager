@@ -30,7 +30,7 @@ class RegisteredUserController extends Controller
         ]);
 
         // 2. Create Domain (e.g., tenant-one.localhost)
-        $centralDomain = config('tenancy.central_domains')[0] ?? 'localhost';
+        $centralDomain = in_array('localhost', config('tenancy.central_domains')) ? 'localhost' : (config('tenancy.central_domains')[0] ?? 'localhost');
         $tenant->domains()->create([
             'domain' => $subdomain . '.' . $centralDomain,
         ]);

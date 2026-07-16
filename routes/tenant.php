@@ -28,31 +28,38 @@ use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 //     });
 // });
 
-Route::middleware([
-    'api',
-    InitializeTenancyByDomain::class,
-    PreventAccessFromCentralDomains::class,
-])->group(function () {
-    // Tenant Authentication Routes
-    Route::prefix('auth')->group(function () {
-        Route::post('/login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'store']);
-        Route::post('logout', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])
-            ->middleware('auth:sanctum')
-            ->name('logout');
-    });
+$host = request()->getHost();
+$centralDomains = config('tenancy.central_domains');
 
-    // Tenant Protected API Resources
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::get('/me', [\App\Http\Controllers\UserController::class, 'show'])->defaults('id', 'me');
-        Route::apiResource('users', \App\Http\Controllers\UserController::class);
-        Route::post('/projects/import', [\App\Http\Controllers\ProjectController::class, 'import']);
-        Route::apiResource('projects', \App\Http\Controllers\ProjectController::class);
-        Route::post('/repositories/import', [\App\Http\Controllers\RepositoryController::class, 'import']);
-        Route::apiResource('repositories', \App\Http\Controllers\RepositoryController::class);
-        Route::apiResource('task-types', \App\Http\Controllers\TaskTypeController::class);
-        Route::apiResource('tasks', \App\Http\Controllers\TaskController::class);
-        Route::apiResource('subtasks', \App\Http\Controllers\SubTaskController::class);
-        Route::post('comments', [\App\Http\Controllers\CommentController::class, 'store']);
-        Route::apiResource('roles', \App\Http\Controllers\RoleController::class);
+// Central domain par tenant routes ko override hone se rokne ke liye check
+if (! in_array($host, $centralDomains)) {
+    Route::middleware([
+        'api',
+        InitializeTenancyByDomain::class,
+        PreventAccessFromCentralDomains::class,
+    ])->prefix('api')->group(function () {
+
+        // Tenant Authentication Routes
+        Route::prefix('auth')->group(function () {
+            Route::post('/login', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'store']);
+            Route::post('logout', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])
+                ->middleware('auth:sanctum')
+                ->name('logout');
+        });
+
+        // Tenant Protected API Resources
+        Route::middleware('auth:sanctum')->group(function () {
+            Route::get('/users/me', [\App\Http\Controllers\UserController::class, 'show'])->defaults('id', 'me');
+            Route::apiResource('users', \App\Http\Controllers\UserController::class);
+            Route::post('/projects/import', [\App\Http\Controllers\ProjectController::class, 'import']);
+            Route::apiResource('projects', \App\Http\Controllers\ProjectController::class);
+            Route::post('/repositories/import', [\App\Http\Controllers\RepositoryController::class, 'import']);
+            Route::apiResource('repositories', \App\Http\Controllers\RepositoryController::class);
+            Route::apiResource('task-types', \App\Http\Controllers\TaskTypeController::class);
+            Route::apiResource('tasks', \App\Http\Controllers\TaskController::class);
+            Route::apiResource('subtasks', \App\Http\Controllers\SubTaskController::class);
+            Route::post('comments', [\App\Http\Controllers\CommentController::class, 'store']);
+            Route::apiResource('roles', \App\Http\Controllers\RoleController::class);
+        });
     });
-});
+} // End of central domain check

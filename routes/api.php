@@ -28,6 +28,11 @@ Route::prefix('auth')->group(function () {
         ->name('logout');
 });
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/users/me', [\App\Http\Controllers\UserController::class, 'show'])->defaults('id', 'me');
+});
+
+
 
 // Route::middleware('auth:sanctum')->group(function () {
 //     // Route::get('/users/me', [UserController::class, 'show']);
